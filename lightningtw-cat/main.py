@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import telegram
 import api_client
+import financial_services
 from dotenv import load_dotenv
 from phishing_detector import PhishingDetector, get_mock_features
 
@@ -81,44 +82,12 @@ def generate_report():
 
 def check_cash_flow():
     """
-    Reads transaction data, flags suspicious activities, and sends an alert.
+    Runs a simulation of the financial services module to check cash flow,
+    including profit sharing and Google Sheets logging.
     """
-    print("💰 正在檢查金流...")
-    try:
-        df = pd.read_csv('transactions.csv')
-
-        # --- Anomaly Detection Rules ---
-        # Rule 1: Flag transactions with failed status
-        failed_txns = df[df['status'] == 'failed']
-
-        # Rule 2: Flag unusually large transactions
-        large_txns = df[df['amount'] > 100000]
-
-        # Combine suspicious transactions and remove duplicates
-        suspicious_txns = pd.concat([failed_txns, large_txns]).drop_duplicates()
-
-        if suspicious_txns.empty:
-            alert_message = "✅ **金流檢查完畢**\n\n所有交易紀錄正常，無發現異常。"
-            print("✅ 金流檢查完成，無異常。")
-        else:
-            alert_message = f"🚨 **緊急金流警報** 🚨\n\n偵測到 {len(suspicious_txns)} 筆可疑交易！\n\n"
-            for index, row in suspicious_txns.iterrows():
-                alert_message += f"- **ID**: `{row['transaction_id']}`, **金額**: `${row['amount']:,.2f}`, **狀態**: `{row['status']}`\n"
-            alert_message += "\n請總司令立即審查！"
-            print(alert_message)
-
-        # Send alert to Telegram via Command Bot
-        token = os.getenv("COMMAND_BOT_TOKEN")
-        chat_id = os.getenv("TELEGRAM_CHAT_ID")
-        bot = telegram.Bot(token=token)
-        bot.send_message(chat_id=chat_id, text=alert_message, parse_mode='Markdown')
-
-        print(f"✅ 金流檢查報告已發送至 Telegram。")
-
-    except FileNotFoundError:
-        print("❌ 錯誤：找不到 `transactions.csv` 檔案。")
-    except Exception as e:
-        print(f"❌ 檢查金流時發生未知錯誤：{e}")
+    print("💰 正在啟動金流檢查與回報模擬...")
+    financial_services.simulate_and_check_flow()
+    print("✅ 金流檢查模擬完成。所有通知與紀錄應已發送。")
 
 
 def simulate_strategy():

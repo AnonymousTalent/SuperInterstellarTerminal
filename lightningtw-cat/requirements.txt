@@ -16,3 +16,6 @@ python-dotenv
 # For AI Model Training with PyTorch Lightning
 torch
 pytorch-lightning
+
+# For Webhook Server (optional)
+Flask

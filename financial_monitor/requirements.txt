@@ -1,0 +1,12 @@
+# For Telegram Bot
+python-telegram-bot
+
+# For Webhook Server
+Flask
+
+# For loading .env files
+python-dotenv
+
+# For Google Sheets API
+gspread
+oauth2client

@@ -68,3 +68,6 @@ cover/
 # Secrets
 credentials.json
 service_account.json
+
+# Obsolete Directories
+/financial_monitor/
