@@ -12,3 +12,7 @@ seaborn
 
 # For loading .env files
 python-dotenv
+
+# For AI Model Training with PyTorch Lightning
+torch
+pytorch-lightning

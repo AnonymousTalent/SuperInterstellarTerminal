@@ -2,47 +2,42 @@ import argparse
 import os
 import pandas as pd
 import telegram
+import api_client
 from dotenv import load_dotenv
+from phishing_detector import PhishingDetector, get_mock_features
 
 def dispatch_orders():
     """
-    Reads unit data from a CSV, dispatches an active unit, and sends a notification.
+    Fetches new orders from the delivery platform API and processes them.
     """
     print("😼⚡️ AI 派單系統啟動中...")
-    try:
-        df = pd.read_csv('units.csv')
 
-        active_units = df[df['operator_status'] == 'Active']
+    new_orders = api_client.get_new_orders()
 
-        if active_units.empty:
-            dispatch_message = "所有單位都在待命中，無可派遣的單位。"
-            print(dispatch_message)
-        else:
-            # Select a random active unit to dispatch
-            unit_to_dispatch = active_units.sample(n=1)
-            unit_id = unit_to_dispatch.iloc[0]['unit_id']
+    if new_orders is None:
+        # This case handles API key errors from the client
+        dispatch_message = "❌ **派單失敗**\n\n無法連接到外送平台 API。請檢查您的 API 金鑰設定。"
+    elif not new_orders:
+        # This case handles when there are no new orders
+        dispatch_message = "👍 **目前無新訂單**\n\n系統將持續監控。"
+    else:
+        # This is the success case
+        print("以下是從平台獲取的新訂單：")
+        for order in new_orders:
+            print(f"  - 訂單ID: {order['order_id']}, 地址: {order['customer_address']}")
 
-            # Update status
-            df.loc[df['unit_id'] == unit_id, 'operator_status'] = 'Engaged'
+        # Here, you would add the logic to assign these orders to drivers/units.
+        # For now, we just confirm that we received them.
 
-            # Save changes
-            df.to_csv('units.csv', index=False)
+        dispatch_message = f"✅ **收到 {len(new_orders)} 筆新訂單**\n\n已從平台成功拉取訂單，準備進行 AI 派單。詳情請查看系統後台。"
 
-            dispatch_message = f"✅ **作戰指令已下達**\n\n單位 `{unit_id}` 已成功派遣，狀態更新為 `Engaged`。"
-            print(f"單位 {unit_id} 已派遣。")
+    # Send a summary to Telegram using the command bot
+    token = os.getenv("COMMAND_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    bot = telegram.Bot(token=token)
+    bot.send_message(chat_id=chat_id, text=dispatch_message, parse_mode='Markdown')
 
-        # Send to Telegram using the command bot
-        token = os.getenv("COMMAND_BOT_TOKEN")
-        chat_id = os.getenv("TELEGRAM_CHAT_ID")
-        bot = telegram.Bot(token=token)
-        bot.send_message(chat_id=chat_id, text=dispatch_message, parse_mode='Markdown')
-
-        print(f"✅ 派單結果已發送至 Telegram Chat ID: {chat_id}。")
-
-    except FileNotFoundError:
-        print("❌ 錯誤：找不到 `units.csv` 檔案。")
-    except Exception as e:
-        print(f"❌ 派遣時發生未知錯誤：{e}")
+    print(f"✅ 派單系統狀態更新已發送至 Telegram Chat ID: {chat_id}。")
 
 
 def generate_report():
@@ -96,6 +91,34 @@ def simulate_strategy():
     # TODO: Add logic for simulating dispatch strategies and calculating ROI.
     print("✅ 策略模擬完成。")
 
+def scan_for_phishing():
+    """
+    Initializes the PhishingDetector model and performs a mock scan.
+    """
+    print("🛡️ 啟動 AI 反釣魚掃描模組...")
+
+    # Initialize the model
+    detector = PhishingDetector()
+    print("✅ AI 模型載入成功。")
+
+    # Simulate scanning a URL
+    # In a real application, you would pass a real URL, extract its features,
+    # and then feed the feature tensor to the model.
+    mock_url_features = get_mock_features()
+    prediction = detector.predict_url(mock_url_features)
+
+    scan_result_message = f"掃描模擬完成。\n- 模擬 URL 特徵: [Tensor of size {mock_url_features.shape}]\n- AI 判斷結果: **{prediction}**"
+    print(scan_result_message)
+
+    # Send result to Telegram
+    token = os.getenv("COMMAND_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    bot = telegram.Bot(token=token)
+    bot.send_message(chat_id=chat_id, text=f"🛡️ **反釣魚系統報告**\n\n{scan_result_message}", parse_mode='Markdown')
+
+    print(f"✅ 掃描結果已發送至 Telegram。")
+
+
 def main():
     """Main function to parse arguments and run tasks."""
     # Load environment variables from .env file
@@ -113,10 +136,11 @@ def main():
         return
 
     parser = argparse.ArgumentParser(description="小閃電貓⚡ AI 雷霆助理")
-    parser.add_argument("--派單", action="store_true", help="自動派送今日訂單")
-    parser.add_argument("--報表", action="store_true", help="生成報表並發送 Telegram")
-    parser.add_argument("--金流檢查", action="store_true", help="監控金流異常")
-    parser.add_argument("--策略模擬", action="store_true", help="模擬不同派單策略並輸出結果")
+    parser.add_argument("--派單", action="store_true", help="從平台 API 拉取新訂單並準備派送")
+    parser.add_argument("--報表", action="store_true", help="生成每日戰報並發送 Telegram")
+    parser.add_argument("--金流檢查", action="store_true", help="監控金流異常 (尚未實現)")
+    parser.add_argument("--策略模擬", action="store_true", help="模擬不同派單策略 (尚未實現)")
+    parser.add_argument("--反釣魚掃描", action="store_true", help="啟動 AI 模型掃描可疑連結")
 
     args = parser.parse_args()
 
@@ -129,6 +153,8 @@ def main():
         check_cash_flow()
     elif args.策略模擬:
         simulate_strategy()
+    elif args.反釣魚掃描:
+        scan_for_phishing()
     else:
         print("🤔 請提供一個操作指令，例如：--派單")
         parser.print_help()

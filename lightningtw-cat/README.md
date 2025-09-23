@@ -144,7 +144,7 @@ v        v       v
 
 ### 快速操作指令
 ```bash
-python main.py --派單          # 自動派送今日訂單
+python main.py --派單          # 從平台 API 拉取新訂單並準備派送
 python main.py --報表          # 生成報表並發送 Telegram
 python main.py --金流檢查      # 監控金流異常
 python main.py --策略模擬      # 模擬不同派單策略並輸出結果
