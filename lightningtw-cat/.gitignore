@@ -1,70 +1,79 @@
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-
-# IDEs
-.idea/
-.vscode/
+# Generic ignore
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
 *.swp
+*.swo
 
 # Secrets
+.env
+.env.local
 credentials.json
 service_account.json
+
+# Build artifacts & Dependencies
+node_modules/
+dist/
+build/
+coverage/
+
+# IDE & Editor directories
+.vscode/
+.idea/
+
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.sqlite3
+instance/
+
+# Java specific
+*.class
+*.jar
+*.war
+*.ear
+target/
+out/
+
+# JavaScript/TypeScript specific
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+# Go specific
+bin/
+*.exe
+*.test
+
+# Rust specific
+/target/
+
+# C/C++ specific
+*.o
+*.obj
+*.dll
+*.exe
+*.out
+
+# Terraform specific
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Docker specific
+*.pid
+*.sock
+
+# System files
+*.DS_Store
+*.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
