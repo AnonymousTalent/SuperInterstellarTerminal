@@ -7,7 +7,7 @@ from pydantic import BaseModel
 load_dotenv()
 
 # Import project modules after loading .env
-from tasks import dispatch, reporting
+from tasks import dispatch, reporting, simulation
 from ai_core import security
 
 # Check for required environment variables at startup
@@ -17,12 +17,23 @@ for var in required_vars:
         print(f"❌ FATAL ERROR: Missing required environment variable: {var}")
         exit(1)
 
+import threading
+
 # Initialize FastAPI App
 app = FastAPI(
     title="⚡ LightningTw AI Assistant API ⚡",
     description="The backend API for the Lightning Empire, providing services for dispatch, reporting, financial monitoring, and security.",
-    version="2.0.0"
+    version="2.1.0" # Version bump for new feature
 )
+
+# --- Background Task ---
+@app.on_event("startup")
+def startup_event():
+    """
+    On server startup, start the dispatch simulation in a background thread.
+    """
+    simulation_thread = threading.Thread(target=tasks.simulation.start_dispatch_simulation, daemon=True)
+    simulation_thread.start()
 
 # --- Pydantic Models for Request Bodies ---
 class PhishingScanRequest(BaseModel):
