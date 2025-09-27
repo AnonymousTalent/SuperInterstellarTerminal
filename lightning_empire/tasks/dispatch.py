@@ -1,6 +1,6 @@
 import os
 import telegram
-import api_client
+from services import api_client
 
 def run_dispatch():
     """

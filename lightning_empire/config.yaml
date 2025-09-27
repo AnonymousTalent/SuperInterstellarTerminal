@@ -1,0 +1,71 @@
+# --- Lightning Empire: Agei Alliance Configuration v2.0 ---
+# Central configuration file for all services and modules.
+# Note: This configuration supports food delivery operations in Taiwanese markets.
+
+# --- Target Markets & Vendors ---
+markets:
+  - name: "Fengjia Night Market (逢甲夜市)"
+    id: "fengjia"
+    annual_revenue_twd: 7140000000 # 7.14 billion TWD
+    cagr_pct: 23.4 # Compound Annual Growth Rate
+    daily_order_potential: 200 # Estimated orders per day
+    vendors:
+      - "Jiguang Xiangxiang Chicken (繼光香香雞)"
+      - "Bei Hui Papaya Milk (北回木瓜牛奶)"
+      - "Fengjia Minyou Market (逢甲民有市場)"
+  - name: "Danshui Agei (淡水阿給)"
+    id: "danshui_agei"
+    annual_revenue_twd: 100000000 # 100 million TWD
+    cagr_pct: 8.0
+    vendors:
+      - "Wenhua Agei (文化阿給)"
+      - "Laopai Agei (老牌阿給)"
+      - "Three Sisters Agei (三姐妹阿給)"
+
+# --- API Endpoints ---
+platforms:
+  foodpanda:
+    api_url: "https://api.foodpanda.com/v1/orders"
+    api_key: "${FOODPANDA_API_KEY}" # Loaded from .env file
+  uber_eats:
+    api_url: "https://api.uber.com/v1/dispatch"
+    api_key: "${UBER_API_KEY}" # Loaded from .env file
+
+# --- Financial Settings ---
+revenue_targets:
+  daily_usd: 250000 # Daily revenue target in USD
+  three_month_twd: 1020000000 # 3-month revenue target in TWD (1.02 billion)
+  owner_share_pct: 90.0 # Owner's profit share percentage
+
+payment_gateways:
+  revolut:
+    usdt_address: "${REVOLUT_USDT_ADDRESS}" # Loaded from .env file
+
+# --- ChainOpera Settings ---
+chainopera:
+  project_count: 30 # Number of active projects
+  monthly_revenue_usd: 27000 # Monthly revenue target in USD
+  owner_share_pct: 90.0 # Owner's share of ChainOpera revenue
+
+# --- System & Automation Settings ---
+scheduler:
+  settlement_check_interval_hours: 3 # Check settlements every 3 hours
+  telegram_push_interval_hours: 6 # Send Telegram notifications every 6 hours
+  typhoon_check_interval_hours: 1 # Monitor typhoon alerts hourly (Taiwan-specific)
+
+logging:
+  directory: "logs" # Relative to project root
+  files:
+    transactions: "transactions.log"
+    webhooks: "webhook.log"
+    ai_decisions: "ai_decisions.log"
+
+deployment:
+  gcp_region: "asia-east1"
+  service_name: "lightning-empire-api"
+  docker_image: "gcr.io/lightning-empire-365/lightning-empire-api:latest"
+
+trademark:
+  name: "Fengjia Danshui Agei AI (逢甲淡水阿給AI)"
+  categories: [35, 39, 42] # Business, Transport, Tech Services (IPC classes)
+  jurisdictions: ["TIPO", "CNIPA", "JPO"]

@@ -1,17 +1,16 @@
 import os
 import pandas as pd
 import telegram
-import financial_services
+from services import financial_services
 
 def run_daily_report():
-    """
-    Generates the daily report and sends it to Telegram.
-    """
+    """Generates the daily report and sends it to Telegram."""
     print("📊 正在生成報表...")
     report_bot_token = os.getenv("REPORT_BOT_TOKEN")
     telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
     try:
+        # This uses a dummy file, but could be adapted to read from a database or live data source
         df = pd.read_csv('dummy_orders.csv')
         completed_orders = df[df['status'] == 'completed']
         report_message = (
@@ -30,8 +29,23 @@ def run_daily_report():
 
 def run_cash_flow_check():
     """
-    Runs a simulation of the financial services module to check cash flow.
+    Runs a simulation of bank transfers, which are then processed by the financial_services module.
     """
     print("💰 正在啟動金流檢查...")
-    financial_services.simulate_and_check_flow()
-    return {"status": "completed", "message": "金流檢查模擬完成。所有通知與紀錄應已發送。"}
+
+    # --- Simulation Data ---
+    ctbc_code = os.getenv('BANK_CTBC_CODE')
+    ctbc_account = os.getenv('BANK_CTBC_ACCOUNT')
+    post_code = os.getenv('BANK_POST_CODE')
+    post_account = os.getenv('BANK_POST_ACCOUNT')
+
+    transfers_to_simulate = [
+        (ctbc_code, ctbc_account, 50000, "模擬轉帳"),
+        (post_code, post_account, 30000, "模擬轉帳"),
+        (ctbc_code, "000000000000", 100, "可疑來源")
+    ]
+
+    for bank_code, account, amount, from_bank in transfers_to_simulate:
+        financial_services.verify_and_process_transfer(bank_code, account, amount, from_bank)
+
+    return {"status": "completed", "message": "金流檢查模擬完成。"}

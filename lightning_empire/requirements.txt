@@ -1,0 +1,35 @@
+# FastAPI Server
+fastapi
+uvicorn[standard]
+pydantic
+
+# Telegram Bot
+python-telegram-bot
+
+# Google Sheets API
+gspread
+oauth2client
+
+# Data Handling & Simulation
+pandas
+PyYAML
+schedule
+requests
+numpy
+
+# AI & Machine Learning
+torch
+pytorch-lightning
+
+# Environment & Config
+python-dotenv
+
+# PDF Generation (Optional)
+reportlab
+
+# GCP Integration (Optional)
+google-cloud-scheduler
+google-cloud-run
+
+# Git Integration (Optional)
+PyGithub

@@ -1,0 +1,39 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Secrets
+credentials.json
+service_account.json
+*.pem
+*.key
+
+# Build artifacts & Dependencies
+node_modules/
+dist/
+build/
+coverage/
+
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.sqlite3
+instance/
+
+# IDE & Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS-specific
+.DS_Store
+Thumbs.db
